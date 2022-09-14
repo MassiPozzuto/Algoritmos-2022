@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="style.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <title>Clima</title>
+  <link rel="icon" href="icono.png">
+</head>
+
+<body>
+  <div id="sunrise" class="container mt-3"></div>
+  <div id="minima" class="container"></div>
+  <div id="maxima" class="container"></div>
+  <div id="tabla" class="container"></div>
+
+  <script>
+    $.ajax({
+      url: 'https://api.openweathermap.org/data/2.5/forecast?lat=-34.6148022&lon=-58.4056014&appid=d802f3bcb7e0cb34ae42d575f8f13679&units=metric&lang=sp',
+      dataType: 'JSON',
+      success: function (data) {
+        var s = `
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Dia</th>
+              <th scope="col">Hora</th>
+              <th scope="col">Temperatura</th>  
+              <th scope="col">Lluvia</th>
+              <th scope="col">Despejado</th>
+            </tr>
+          </thead>
+          <tbody>
+        `;
+        var weather;
+        var rain;
+        var clear;
+
+        var dia_spec;
+        var dia_max;
+        var dia_min;
+
+        var temp;
+        var temp_max = -1000;
+        var temp_min = 1000;
+
+        // Recorro todas las listas que contienen los datos del clima cada 3 horas
+        data['list'].forEach((value, key) => {
+          // Clima
+          weather = value.weather[0].main;
+          if (weather == "Rain") {
+            // Llueve
+            rain = "<b>Si</b>";
+            clear = "No";
+          } else if (weather == "Clear") {
+            // Esta despejado
+            clear = "<b>Si</b>";
+            rain = "No";
+          } else {
+            // No llueve ni esta despejado
+            rain = "No";
+            clear = "No";
+          }
+
+          //Temperatura 
+          temp = value.main.temp
+          if (temp > temp_max) {
+            //Temperatura maxima 
+            temp_max = temp
+            // Dia y hora en que pasara
+            dia_max = value.dt_txt
+          } else if (temp < temp_min) {
+            //Temperatura minima 
+            temp_min = temp
+            // Dia y hora en que pasara
+            dia_min = value.dt_txt
+          }
+
+          // Dia y hora de todo
+          dia_spec = value.dt_txt
+
+          s += `  
+            <tr>
+              <th scope="row">${key + 1}</th>
+              <td>${new Date(dia_spec).toDateString()}</td>
+              <td>${dia_spec.slice(11, 16)}</td>
+              <td>${temp}°</td>
+              <td>${rain}</td>
+              <td>${clear}</td>
+            </tr>
+          `;
+        });
+        s += `
+          </tbody>
+        </table>
+        `;
+
+        $("#sunrise").html(`Hoy amanecio a las ${new Date(data.city.sunrise * 1000).getHours()}:${new Date(data.city.sunrise).getMinutes()}`);
+        $("#minima").html(`El dia ${new Date(dia_min).toDateString()} a las ${dia_min.slice(11, 16)} haran ${temp_min}°, siendo el dia y hora`);
+        $("#maxima").html(`El dia ${new Date(dia_max).toDateString()} a las ${dia_max.slice(11, 16)} haran ${temp_max}°, siendo el dia y hora`);
+
+        $("#tabla").html(s);
+      }
+    });
+  </script>
+</body>
+
+</html>

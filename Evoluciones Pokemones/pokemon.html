@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="style.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <title>Evolutions Chains</title>
+</head>
+
+<body>
+
+  <div id="data"></div>
+
+  <script>
+    var id_pokemon = parseInt(prompt("Ingrese un numero entre 1 y 476"));
+    if (Number.isInteger(id_pokemon) && id_pokemon > 0 && id_pokemon < 477) {
+      $.ajax({
+        url: `https://pokeapi.co/api/v2/evolution-chain/${id_pokemon}/`,
+        dataType: "json",
+        success: function (data) {
+          var buscar = data['chain'];
+          var foto = [];
+          var cant_ev = 0;
+          var s = "";
+          var name = [];
+          while (buscar != undefined) {
+            name[cant_ev] = buscar['species']['name'];
+            $.ajax({
+              url: `https://pokeapi.co/api/v2/pokemon/${name[cant_ev]}/`,
+              dataType: "json",
+              async: false,
+              success: function (data1) {
+                foto[name[cant_ev]] = data1['sprites']['other']['home']['front_default'];
+                console.log(foto[name[cant_ev]])
+                s += `<div class="container-v2 mb-3">
+                                <div class="card container_data">
+                                    <div class="text-center">
+                                        <img class="card-img-top " src="${foto[name[cant_ev]]}" alt="Pokemon image" style="width: 10rem;">
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="container_pokemon_name">
+                                            <span class="pokemon_name">${name[cant_ev].toUpperCase()}</span>
+                                        </div>
+                                        <div class="data_pokemon">
+                                            <h6 class="data_pokemon-title">Pokemon data: </h6>
+                                            <div class="data_pokemon-content">
+                                                <div class="pokemon_detail">
+                                                    <span class="pokemon_detail-title">ID: </span>
+                                                    <span>${data['id']}</span>
+                                                </div>
+                                                <div class="pokemon_detail">
+                                                    <span class="pokemon_detail-title">Es tipo bebe?: </span>
+                                                    <span>${buscar['is_baby']}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="data_ev">
+                                            <h6 class="ev_title">Evolución: </h6>
+                                            <div class="ev_content">`
+                // Verifico que sea una evolucion y no el pokemon base
+                if (buscar['evolution_details'].length != 0) {
+                  // Recorro 'evolution_details' por si puede evolucionar a mas de 1 forma (el mismo pokemon)
+                  buscar['evolution_details'].forEach((value, key) => {
+                    let claves = Object.keys(buscar['evolution_details'][key]);
+                    for (let i = 0; i < claves.length; i++) {
+                      let clave = claves[i];
+                      // Verifico que el detalle de la evolucion no sea ningun valor que pueda tomarse como negativo
+                      if (buscar['evolution_details'][key][clave]) {
+                        //Verifico si el detalle de la evolucion es un objeto
+                        if (typeof (buscar['evolution_details'][key][clave]) == "object") {
+                          let subclaves = Object.keys(buscar['evolution_details'][key][clave]);
+
+                          for (let i = 0; i < subclaves.length; i++) {
+                            let subclave = subclaves[i];
+                            if (subclave != "url") {
+                              s += `<div class="ev_detail"><span class="ev_detail-title">${clave}:</span> <span>${buscar['evolution_details'][key][clave][subclave]}</span> `;
+                            } else {
+                              s += `<a href="${buscar['evolution_details'][key][clave][subclave]}" class="btn btn-danger">Más info</a></div>`
+                            }
+                          }
+                        } else {
+                          s += `<div class="ev_detail"><span class="ev_detail-title">${clave}:</span> <span>${buscar['evolution_details'][key][clave]}</span></div>`;
+                        }
+                      }
+                    }
+                    // Si puede evolucionar a mas de una forma
+                    if (buscar['evolution_details'][key + 1]) {
+                      s += `</div>
+                          <div class="ev_separator">
+                              <span><b>O</b></span>
+                          </div> 
+                      <div class="ev_content">`
+                    } else {
+                      s += `</div>`;
+                    }
+                  });
+                }
+                if (buscar['evolution_details'].length == 0) {
+                  if (data['chain']['evolves_to'].length == 0) {
+                    s += `<span >${name[cant_ev].toUpperCase()} no tiene evolución ni evoluciona de ningún Pokémon</span></div>`;
+                  } else {
+                    s += `<span>${name[cant_ev].toUpperCase()} no evoluciona de ningún Pokémon</span></div>`;
+                  }
+                }
+                s += `      </div>
+                        <div class="text-center mt-3">
+                            <a href="https://pokeapi.co/api/v2/pokemon/${name[cant_ev]}/" class="btn btn-info p-2 ">Más info del pokémon</a>
+            
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+                //console.log(buscar)
+                buscar = buscar['evolves_to'][0];
+                cant_ev++;
+                //console.log(buscar)
+                //console.log(s)
+
+              }
+
+            });
+
+            //console.log(s);
+
+            //return;
+          }
+          //console.log(s);
+          $("#data").html(s);
+        }
+
+      });
+
+    } else {
+      alert("Debes ingresar un numero entero entre 1 y 476");
+    }
+  </script>
+</body>
+
+</html>
