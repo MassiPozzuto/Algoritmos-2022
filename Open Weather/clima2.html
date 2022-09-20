@@ -79,15 +79,17 @@
         const opciones = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
 
         data['list'].forEach((value, key) => {
-          // Para mostrarlo solamente 24 veces
+          /* Para mostrarlo solamente 24 veces
           if (key > 23) {
             return;
-          }
+          }*/
 
           dia_spec = value.dt_txt;
-          dia_spec2 = new Date(value.dt * 1000).toLocaleDateString('es', opciones);
-
-          dia_spec = (dia_spec.slice(11, 16) == "00:00") ? dia_spec2.split(', ')[0].toUpperCase() : dia_spec.slice(11, 16);
+          //dia_spec2 = new Date(value.dt * 1000).toLocaleDateString('es', opciones);
+          //dia_spec = (dia_spec.slice(11, 16) == "00:00") ? dia_spec2.split(', ')[0].toUpperCase() : dia_spec.slice(11, 16);
+          dia_spec2 = new Date(dia_spec).getDay()
+          dias = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES"]
+          dia_spec = (dia_spec.slice(11, 16) == "00:00") ? dias[dia_spec2] : dia_spec.slice(11, 16);
           dia_spec = (key == 0) ? "AHORA" : dia_spec;
 
 
