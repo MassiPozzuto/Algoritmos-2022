@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="style.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+  <title>Clima</title>
+  <link rel="icon" href="icono.png">
+</head>
+
+<body>
+  <div id="contenido" class="container"></div>
+  <div id="sunrise" class="container"></div>
+  <div id="minima" class="container"></div>
+  <div id="maxima" class="container"></div>
+
+
+  <script>
+    $.ajax({
+      url: 'https://api.openweathermap.org/data/2.5/forecast?lat=-34.62787591&lon=-58.396007&appid=d802f3bcb7e0cb34ae42d575f8f13679&units=metric&lang=sp',
+      dataType: 'JSON',
+      async: false,
+      success: function (data) {
+        var s = `
+        <div class="container__open-weather">
+
+            <div class="container__city text-center">
+              <h4>${data.city.name}, ${data.city.country}</h4>
+            </div>`;
+
+        if (data.list[0]) {
+          var amanecer = new Date(data.city.sunrise * 1000);
+          var anochecer = new Date(data.city.sunset * 1000);
+
+          s += `
+            <div class="container__temp">
+              <span class="temp">${data.list[0].main.temp}°C</span>
+            </div>
+            <div class="container__datos">
+              <div class="container__data">
+                <span><b>Amanecer:</b></span>
+                <span>${amanecer.getHours()}:${amanecer.getMinutes()}</span>
+              </div>
+              <div class="container__data">
+                <span><b>Anochecer:</b></span>
+                <span>${anochecer.getHours()}:${anochecer.getMinutes()}</span>
+              </div>
+              <div class="container__data">
+                <span><b>Sensacion termica:</b></span>
+                <span>${data.list[0].main.feels_like}°C</span>
+              </div>
+              <div class="container__data">
+                <span><b>Clima:</b></span>
+                <span>${data.list[0].weather[0].description}</span>
+              </div>
+              <div class="container__data">
+                <span><b>Velocidad del viento:</b></span>
+                <span>${data.list[0].wind.speed}km/h</span>
+              </div>
+              <div class="container__data">
+                <span><b>Humedad:</b></span>
+                <span>${data.list[0].main.humidity}%</span>
+              </div>
+            </div>`;
+        }
+
+        s += `
+          <div class="container__list">`;
+
+        var hoy = Date.now()
+        var dia_spec;
+        var temp;
+        const opciones = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+
+        data['list'].forEach((value, key) => {
+          dia_spec = value.dt_txt;
+          dia_spec2 = new Date(value.dt * 1000).toLocaleDateString('es', opciones);
+
+          dia_spec = (dia_spec.slice(11, 16) == "00:00") ? dia_spec2.split(', ')[0] : dia_spec.slice(11, 16);
+          dia_spec = (key == 0) ? "Ahora" : dia_spec;
+
+          s += `
+          <div class="container__list-spec">
+            <span class="container__list-spec-time">${dia_spec}</span>
+            <span class="container__list-spec-temp">${value.main.temp}°C</span>
+            <span class="container__list-spec-weather">${value.weather[0].description}</span>
+            <span class="container__list-spec-wind">${value.wind.speed}km/h</span>
+          </div>`;
+
+          /*temp = value.main.temp
+          //Temperatura maxima y minima
+          if (temp > max) {
+            max = temp
+            // Cantidad en horas de tiempo que falta para llegar a esa temp
+            dia_max = new Date(hoy + (key * 3 * 60 * 60 * 1000))
+          } else if (temp < min) {
+            min = temp
+            // Cantidad en horas de tiempo que falta para llegar a esa temp
+            dia_min = new Date(hoy + (key * 3 * 60 * 60 * 1000))
+          }*/
+
+          if (key == 24) {
+            return;
+          }
+
+        });
+
+
+        s += `
+        </div>`;
+
+        $("#contenido").html(s);
+
+        //$("#sunrise").html(`Hoy amanecio a las ${amanecer.getHours()}:${amanecer.getMinutes()}`);
+        //$("#minima").html(`El dia ${dia_min.getDate()}/${dia_min.getMonth() + 1} a las ${dia_min.getHours()}:00 haran ${min}°, siendo el dia con menos temperatura contando 5 dias desde hoy`);
+        //$("#maxima").html(`El dia ${dia_max.getDate()}/${dia_max.getMonth() + 1} a las ${dia_max.getHours()}:00 haran ${max}°, siendo el dia con mas temperatura contando 5 dias desde hoy`);
+
+      }
+    });
+  </script>
+</body>
+
+</html>
