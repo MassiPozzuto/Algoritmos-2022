@@ -18,9 +18,6 @@
 
 <body>
   <div id="contenido" class="container"></div>
-  <div id="sunrise" class="container"></div>
-  <div id="minima" class="container"></div>
-  <div id="maxima" class="container"></div>
 
 
   <script>
@@ -75,17 +72,24 @@
         s += `
           <div class="container__list">`;
 
-        var hoy = Date.now()
         var dia_spec;
         var temp;
+        var max = -1000;
+        var min = 1000;
         const opciones = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
 
         data['list'].forEach((value, key) => {
+          // Para mostrarlo solamente 24 veces
+          if (key > 23) {
+            return;
+          }
+
           dia_spec = value.dt_txt;
           dia_spec2 = new Date(value.dt * 1000).toLocaleDateString('es', opciones);
 
-          dia_spec = (dia_spec.slice(11, 16) == "00:00") ? dia_spec2.split(', ')[0] : dia_spec.slice(11, 16);
-          dia_spec = (key == 0) ? "Ahora" : dia_spec;
+          dia_spec = (dia_spec.slice(11, 16) == "00:00") ? dia_spec2.split(', ')[0].toUpperCase() : dia_spec.slice(11, 16);
+          dia_spec = (key == 0) ? "AHORA" : dia_spec;
+
 
           s += `
           <div class="container__list-spec">
@@ -95,21 +99,7 @@
             <span class="container__list-spec-wind">${value.wind.speed}km/h</span>
           </div>`;
 
-          /*temp = value.main.temp
-          //Temperatura maxima y minima
-          if (temp > max) {
-            max = temp
-            // Cantidad en horas de tiempo que falta para llegar a esa temp
-            dia_max = new Date(hoy + (key * 3 * 60 * 60 * 1000))
-          } else if (temp < min) {
-            min = temp
-            // Cantidad en horas de tiempo que falta para llegar a esa temp
-            dia_min = new Date(hoy + (key * 3 * 60 * 60 * 1000))
-          }*/
 
-          if (key == 24) {
-            return;
-          }
 
         });
 
@@ -119,9 +109,6 @@
 
         $("#contenido").html(s);
 
-        //$("#sunrise").html(`Hoy amanecio a las ${amanecer.getHours()}:${amanecer.getMinutes()}`);
-        //$("#minima").html(`El dia ${dia_min.getDate()}/${dia_min.getMonth() + 1} a las ${dia_min.getHours()}:00 haran ${min}°, siendo el dia con menos temperatura contando 5 dias desde hoy`);
-        //$("#maxima").html(`El dia ${dia_max.getDate()}/${dia_max.getMonth() + 1} a las ${dia_max.getHours()}:00 haran ${max}°, siendo el dia con mas temperatura contando 5 dias desde hoy`);
 
       }
     });
