@@ -86,7 +86,7 @@
 
           dia_spec = value.dt_txt;
           dia_spec2 = new Date(dia_spec).getDay()
-          dias = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES"]
+          dias = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"]
           dia_spec = (dia_spec.slice(11, 16) == "00:00") ? dias[dia_spec2] : dia_spec.slice(11, 16);
           dia_spec = (key == 0) ? "AHORA" : dia_spec;
 
