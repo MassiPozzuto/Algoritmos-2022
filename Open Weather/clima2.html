@@ -60,7 +60,7 @@
               </div>
               <div class="container__data">
                 <span><b>Velocidad del viento:</b></span>
-                <span>${data.list[0].wind.speed}km/h</span>
+                <span><img class="container__list-spec-wind-deg" src="img/direccion.png" style="transform: rotate(${data.list[0].wind.deg}deg);">${data.list[0].wind.speed}km/h</span>
               </div>
               <div class="container__data">
                 <span><b>Humedad:</b></span>
@@ -85,8 +85,6 @@
           }*/
 
           dia_spec = value.dt_txt;
-          //dia_spec2 = new Date(value.dt * 1000).toLocaleDateString('es', opciones);
-          //dia_spec = (dia_spec.slice(11, 16) == "00:00") ? dia_spec2.split(', ')[0].toUpperCase() : dia_spec.slice(11, 16);
           dia_spec2 = new Date(dia_spec).getDay()
           dias = ["DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES"]
           dia_spec = (dia_spec.slice(11, 16) == "00:00") ? dias[dia_spec2] : dia_spec.slice(11, 16);
@@ -95,22 +93,23 @@
 
           s += `
           <div class="container__list-spec">
-            <span class="container__list-spec-time">${dia_spec}</span>
-            <span class="container__list-spec-temp">${value.main.temp}°C</span>
+            <span class="container__list-spec-time">${dia_spec}</span>`;
+
+          if (value.weather[0].main == "Clear") {
+            s += `<img class="container__list-spec-weather-img" src="img/clear.png" width="40px" `;
+          } else {
+            s += `<img class="container__list-spec-weather-img" src="http://openweathermap.org/img/wn/${value.weather[0].icon}.png">`;
+          }
+          s += `<span class="container__list-spec-temp">${value.main.temp}°C</span>
             <span class="container__list-spec-weather">${value.weather[0].description}</span>
-            <span class="container__list-spec-wind">${value.wind.speed}km/h</span>
+            <span class="container__list-spec-wind"><img class="container__list-spec-wind-deg" src="img/direccion.png" style="transform: rotate(${value.wind.deg}deg);">${value.wind.speed}km/h</span>
           </div>`;
-
-
 
         });
 
-
         s += `
         </div>`;
-
         $("#contenido").html(s);
-
 
       }
     });

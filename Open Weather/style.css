@@ -47,7 +47,7 @@ body {
   border-radius: 0.5rem;
   border: 1px solid black;
   width: 10rem;
-  height: 10rem;
+  height: 13rem;
 }
 
 .container__list-spec-time,
@@ -61,6 +61,10 @@ body {
   font-weight: 600;
 }
 
+.container__list-spec-wind-deg {
+  width: 15px;
+  margin-right: 7px;
+}
 
 .container__datos {
   display: flex;
