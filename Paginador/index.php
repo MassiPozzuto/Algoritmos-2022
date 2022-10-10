@@ -37,6 +37,7 @@
         loadUsers();
         $('.page-link').click(function() {
 
+            // Actualizo valor de variable page
             if (this.value == "Next") {
                 page++;
             } else if (this.value == "Previous") {
@@ -58,6 +59,7 @@
                 $('#previous').attr('disabled', true)
             }
 
+            // Cambio valores de botones segun la pagina en la que este
             if (page > 2 && page < amt_page_total - 1) {
                 var buttons = [...$('.page-number')];
                 var aux = page - 1;
@@ -85,6 +87,7 @@
 
         })
 
+        // Funcion para cargar los usuarios usando ajax
         function loadUsers() {
             $.ajax({
                 url: `server.php?page=${page}`,
