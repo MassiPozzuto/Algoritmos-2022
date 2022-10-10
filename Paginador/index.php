@@ -110,12 +110,12 @@
                         //console.log(users[claves[i]])
                         contentHTML += `
                             <tr>
-                                <td>${users[claves[i]]['id']}</td>
-                                <td>${users[claves[i]]['name']}</td>
-                                <td>${users[claves[i]]['username']}</td>
-                                <td>${users[claves[i]]['email']}</td>
-                                <td>${users[claves[i]]['biography']}</td>
-                                <td>${users[claves[i]]['gender']}</td>
+                                <td style="padding: 0 25px 0 0;">${users[claves[i]]['id']}</td>
+                                <td style="padding: 0 25px 0 0;">${users[claves[i]]['name']}</td>
+                                <td style="padding: 0 25px 0 0;">${users[claves[i]]['username']}</td>
+                                <td style="padding: 0 25px 0 0;">${users[claves[i]]['email']}</td>
+                                <td style="padding: 0 25px 0 0;">${(!users[claves[i]]['biography'])? "" : users[claves[i]]['biography']}</td>
+                                <td style="padding: 0 25px 0 0;">${users[claves[i]]['gender']}</td>
                             </tr>`;
                     }
                     contentHTML += `
