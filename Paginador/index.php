@@ -99,12 +99,12 @@
                     var contentHTML = `
                         <table border="1">
                             <tr >
-                                <th>id</th>
-                                <th>nombre</th>
-                                <th>username</th>
-                                <th>email</th>
-                                <th>biografia</th>
-                                <th>genero</th>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Biografia</th>
+                                <th>Genero</th>
                             </tr>`;
                     for (let i = 0; i < claves.length - 1; i++) {
                         //console.log(users[claves[i]])
