@@ -69,7 +69,7 @@
                 });
             } else if (page > amt_page_total - 2) {
                 var buttons = [...$('.page-number')];
-                var aux = 4;
+                var aux = amt_page_total - 2;
                 buttons.forEach((page_number, key) => {
                     page_number.value = aux;
                     aux++;
